@@ -15,10 +15,15 @@ main :: proc() {
 	player_size := rl.Vector2{64, 64}
   player_vel : rl.Vector2 
 
+  // BLOCK STATS
+  block_pos := rl.Vector2{0, f32(WINDOW_HEIGHT) - player_size.y}
+  block_size := rl.Vector2{1280, 64}
+
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		defer {
 			rl.DrawRectangleV(player_pos, player_size, rl.GREEN)
+      rl.DrawRectangleV(block_pos, block_size, rl.BROWN)
 			rl.EndDrawing()
 		}
 
@@ -40,12 +45,8 @@ main :: proc() {
     
     // Gravity
     player_vel.y += 2000 * rl.GetFrameTime()
-
+    
+    // Player Velocity
     player_pos += player_vel * rl.GetFrameTime()
-
-    if player_pos.y >= f32(WINDOW_HEIGHT) - player_size.y {
-      player_pos.y = f32(WINDOW_HEIGHT) - player_size.y
-    }
-
 	}
 }
