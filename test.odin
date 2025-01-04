@@ -15,6 +15,8 @@ main :: proc() {
 	player_size := rl.Vector2{64, 64}
   player_vel : rl.Vector2 
   player_grounded : bool
+  player_idle_anim := rl.LoadTexture("sprites/idle.png")
+  player_run_anim := rl.LoadTexture("sprites/run.png")
 
   // GROUND STATS
   ground_pos := rl.Vector2{0, f32(WINDOW_HEIGHT) - player_size.y}
