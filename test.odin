@@ -16,15 +16,15 @@ main :: proc() {
   player_vel : rl.Vector2 
   player_grounded : bool
 
-  // BLOCK STATS
-  block_pos := rl.Vector2{0, f32(WINDOW_HEIGHT) - player_size.y}
-  block_size := rl.Vector2{1280, 64}
+  // GROUND STATS
+  ground_pos := rl.Vector2{0, f32(WINDOW_HEIGHT) - player_size.y}
+  ground_size := rl.Vector2{1280, 64}
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		defer {
-			rl.DrawRectangleV(player_pos, player_size, rl.GREEN)
-      rl.DrawRectangleV(block_pos, block_size, rl.BROWN)
+			rl.DrawRectangleV(player_pos, player_size, rl.GREEN) // Player Drawing
+      rl.DrawRectangleV(ground_pos, ground_size, rl.BROWN) // Ground Drawing
 			rl.EndDrawing()
 		}
 
@@ -51,8 +51,8 @@ main :: proc() {
     // Player Velocity
     player_pos += player_vel * rl.GetFrameTime()
 
-    if player_pos.y >= block_pos.y - block_size.y{
-      player_pos.y = block_pos.y - block_size.y
+    if player_pos.y >= ground_pos.y - ground_size.y{
+      player_pos.y = ground_pos.y - ground_size.y
       player_grounded = true
     }
 	}
