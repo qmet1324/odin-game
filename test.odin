@@ -14,6 +14,7 @@ main :: proc() {
 	player_pos := rl.Vector2{640, 320}
 	player_size := rl.Vector2{64, 64}
   player_vel : rl.Vector2 
+  player_grounded : bool
 
   // BLOCK STATS
   block_pos := rl.Vector2{0, f32(WINDOW_HEIGHT) - player_size.y}
@@ -38,15 +39,21 @@ main :: proc() {
       player_vel.x = 0
     }
     
-    // Player Jump
-    if rl.IsKeyPressed(.SPACE) {
-      player_vel.y = -600
-    }
-    
     // Gravity
     player_vel.y += 2000 * rl.GetFrameTime()
     
+    // Player Jump
+    if rl.IsKeyPressed(.SPACE) && player_grounded {
+      player_vel.y = -600
+      player_grounded = false
+    }
+    
     // Player Velocity
     player_pos += player_vel * rl.GetFrameTime()
+
+    if player_pos.y >= block_pos.y - block_size.y{
+      player_pos.y = block_pos.y - block_size.y
+      player_grounded = true
+    }
 	}
 }
