@@ -12,30 +12,22 @@ main :: proc() {
   
   // PLAYER STATS
 	player_pos := rl.Vector2{640, 320}
-	player_size := rl.Vector2{128, 128}
+	player_size := rl.Vector2{64, 64}
   player_vel : rl.Vector2 
   player_grounded : bool
+
+  // IDLE ANIM STATS
   player_idle_texture := rl.LoadTexture("sprites/idle.png")
   player_idle_num_frames := 7
-  player_run_texture := rl.LoadTexture("sprites/run.png")
-
-  // FRAMES DIVISION
+  player_idle_frame_timer: f32
+  player_idle_current_frame: int 
+  player_idle_frame_length := f32(0.1)
   player_idle_width := f32(player_idle_texture.width)
   player_idle_height := f32(player_idle_texture.height)
 
-  draw_player_source := rl.Rectangle {
-    x = 0,
-    y = 0,
-    width = player_idle_width / f32(player_idle_num_frames),
-    height = player_idle_height,
-  }
-
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
-		defer {
-			rl.DrawTextureRec(player_idle_texture, draw_player_source, player_pos, rl.WHITE) // Player Drawing
-			rl.EndDrawing()
-		}
+		defer rl.EndDrawing()
 
 		rl.ClearBackground(rl.GRAY)
     
@@ -65,5 +57,33 @@ main :: proc() {
       player_pos.y = f32(WINDOW_HEIGHT) - player_size.y
       player_grounded = true
     }
+    
+    // Animation Frame Counter
+    player_idle_frame_timer += rl.GetFrameTime()
+
+    if player_idle_frame_timer > player_idle_frame_length {
+      player_idle_current_frame += 1
+      player_idle_frame_timer = 0
+
+      if player_idle_current_frame == player_idle_num_frames {
+        player_idle_current_frame = 0
+      }
+    }
+ 
+    draw_player_source := rl.Rectangle {
+      x = f32(player_idle_current_frame) * player_idle_width / f32(player_idle_num_frames),
+      y = 0,
+      width = player_idle_width / f32(player_idle_num_frames),
+      height = player_idle_height,
+    }
+
+    draw_player_dest := rl.Rectangle {
+      x = player_pos.x,
+      y = player_pos.y,
+      width = player_idle_width / f32(player_idle_num_frames),
+      height = player_idle_height,
+    }
+
+		rl.DrawTexturePro(player_idle_texture, draw_player_source, draw_player_dest, 0, 0, rl.WHITE) // Player Drawing
 	}
 }
