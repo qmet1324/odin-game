@@ -21,9 +21,10 @@ main :: proc() {
   player_idle_num_frames := 7
   player_idle_frame_timer: f32
   player_idle_current_frame: int 
-  player_idle_frame_length := f32(0.1)
-  player_idle_width := f32(player_idle_texture.width)
+  player_idle_width := f32(player_idle_texture.width) 
   player_idle_height := f32(player_idle_texture.height)
+  player_idle_frame_length := f32(0.1)
+  player_flip: bool
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
@@ -34,8 +35,10 @@ main :: proc() {
     // Player Movement
 		if rl.IsKeyDown(.LEFT) && player_pos.x >= 0 {
       player_vel.x = -300
+      player_flip = true
 		} else if rl.IsKeyDown(.RIGHT) && player_pos.x + player_size.x <= f32(WINDOW_WIDTH) {
       player_vel.x = 300
+      player_flip = false
 		} else {
       player_vel.x = 0
     }
@@ -75,6 +78,10 @@ main :: proc() {
       y = 0,
       width = player_idle_width / f32(player_idle_num_frames),
       height = player_idle_height,
+    }
+
+    if player_flip {
+      draw_player_source.width = -draw_player_source.width
     }
 
     draw_player_dest := rl.Rectangle {
