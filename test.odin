@@ -6,6 +6,14 @@ import rl "vendor:raylib"
 WINDOW_WIDTH: i32 : 1280
 WINDOW_HEIGHT: i32 : 720
 
+Animation :: struct {
+  texture : rl.Texture2D,
+  num_frames : int,
+  frame_timer: f32,
+  current_frame: int,
+  frame_length : f32
+}
+
 main :: proc() {
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My First Game")
 	defer rl.CloseWindow()
@@ -15,16 +23,22 @@ main :: proc() {
 	player_size := rl.Vector2{64, 64}
   player_vel : rl.Vector2 
   player_grounded : bool
+  player_flip: bool
 
   // IDLE ANIM STATS
   player_idle_texture := rl.LoadTexture("sprites/idle.png")
   player_idle_num_frames := 7
-  player_idle_frame_timer: f32
-  player_idle_current_frame: int 
   player_idle_width := f32(player_idle_texture.width) 
   player_idle_height := f32(player_idle_texture.height)
-  player_idle_frame_length := f32(0.1)
-  player_flip: bool
+  player_frame_timer: f32
+  player_current_frame: int 
+  player_frame_length := f32(0.1)
+
+  player_idle := Animation {
+    texture = rl.LoadTexture("sprites/idle.png"),
+    num_frames = 7,
+    frame_length = 0.1,
+  }
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
@@ -56,25 +70,25 @@ main :: proc() {
     player_pos += player_vel * rl.GetFrameTime()
     
     // Hardcoded Ground 
-    if player_pos.y >= f32(WINDOW_HEIGHT) - player_size.y{
+    if player_pos.y >= f32(WINDOW_HEIGHT) - player_size.y {
       player_pos.y = f32(WINDOW_HEIGHT) - player_size.y
       player_grounded = true
     }
     
     // Animation Frame Counter
-    player_idle_frame_timer += rl.GetFrameTime()
+    player_frame_timer += rl.GetFrameTime()
 
-    if player_idle_frame_timer > player_idle_frame_length {
-      player_idle_current_frame += 1
-      player_idle_frame_timer = 0
+    if player_frame_timer > player_frame_length {
+      player_current_frame += 1
+      player_frame_timer = 0
 
-      if player_idle_current_frame == player_idle_num_frames {
-        player_idle_current_frame = 0
+      if player_current_frame == player_idle_num_frames {
+        player_current_frame = 0
       }
     }
  
     draw_player_source := rl.Rectangle {
-      x = f32(player_idle_current_frame) * player_idle_width / f32(player_idle_num_frames),
+      x = f32(player_current_frame) * player_idle_width / f32(player_idle_num_frames),
       y = 0,
       width = player_idle_width / f32(player_idle_num_frames),
       height = player_idle_height,
